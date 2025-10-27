@@ -9,8 +9,8 @@ import gsw
 
 
 # Usage:
-#   splice_clim.py --date YYYYMMDDHH [--dir DIR] [--out FILE]
-#                  --layer-file PATH [--yearly FILE]
+#   splice_clim.py --date YYYYMMDDHH [--monthly-dir DIR] [--out FILE]
+#                  --layer-file PATH [--yearly-file FILE]
 #                  [--depth-threshold M] [--refp PR]
 # Description:
 #   Interpolates monthly MOM6-layer climatologies for Temp and Salt,
@@ -31,7 +31,8 @@ def parse_args(argv=None):
         "--date", required=True, help="Target datetime YYYYMMDDHH"
     )
     p.add_argument(
-        "--dir", default=".", help="Directory with monthly files"
+        "--monthly-dir", dest="monthly_dir", default=".",
+        help="Directory with monthly files"
     )
     p.add_argument(
         "--out", default=None, help="Output file path"
@@ -41,7 +42,7 @@ def parse_args(argv=None):
         help="MOM6 layer thickness file (contains variable 'h')"
     )
     p.add_argument(
-        "--yearly", dest="yearly", required=False,
+        "--yearly-file", dest="yearly_file", required=False,
         help="Yearly climatology file on MOM6 layers"
     )
     p.add_argument(
@@ -155,7 +156,7 @@ def main(argv=None):
     args = parse_args(argv)
 
     date_str = args.date
-    base_dir = Path(args.dir)
+    base_dir = Path(args.monthly_dir)
     out_path = (
         Path(args.out) if args.out is not None
         else Path(f"woa_on_mom6_layers_{date_str}.nc")
@@ -205,8 +206,8 @@ def main(argv=None):
     zc = compute_layer_centers(args.layer_file, layer_var="h")
 
     # Replace below depth threshold with yearly climatology (mandatory)
-    if args.yearly:
-        yearly_path = Path(args.yearly)
+    if args.yearly_file:
+        yearly_path = Path(args.yearly_file)
     else:
         yearly_path = base_dir / "woa_on_mom6_layers.nc"
     if not yearly_path.exists():

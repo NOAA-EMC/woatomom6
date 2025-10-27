@@ -18,8 +18,6 @@ CONFIG = {
     "woa23_outdir": "./woa23",
 
     # Grid
-    "nlon": 2880,
-    "nlat": 1440,
     "dlon": 0.25,
     "dlat": 0.25,
     "xbnds": [-180.0, 180.0],
